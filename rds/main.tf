@@ -1,11 +1,14 @@
 terraform {
-
+  required_providers {
+    aws = {
+      version = ">=4.59.0"
+    }
+  }
 }
 
-provider "aws" {
-  region = var.aws_region
+locals {
+  rds_engine_major_version = split(".", data.aws_rds_engine_version.postgresql.version)[0]
 }
-
 
 module "aurora_postgresql_v2" {
   source  = "terraform-aws-modules/rds-aurora/aws"
@@ -35,8 +38,8 @@ module "aurora_postgresql_v2" {
   master_password        = var.rds_master_passwored
   apply_immediately      = true
 
-  db_parameter_group_name         = aws_db_parameter_group.postgresql14.id
-  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.postgresql14.id
+  db_parameter_group_name         = aws_db_parameter_group.postgresql.id
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.postgresql.id
 
   tags = {
     project     = var.app
@@ -44,9 +47,9 @@ module "aurora_postgresql_v2" {
   }
 }
 
-resource "aws_db_parameter_group" "postgresql14" {
+resource "aws_db_parameter_group" "postgresql" {
   name        = "${var.app}-${var.environment}-parameter-group"
-  family      = "aurora-postgresql14"
+  family      = "aurora-postgresql${local.rds_engine_major_version}"
   description = "${var.app}-${var.environment}-parameter-group"
   tags = {
     project     = var.app
@@ -54,9 +57,9 @@ resource "aws_db_parameter_group" "postgresql14" {
   }
 }
 
-resource "aws_rds_cluster_parameter_group" "postgresql14" {
+resource "aws_rds_cluster_parameter_group" "postgresql" {
   name        = "${var.app}-${var.environment}-cluster-parameter-group"
-  family      = "aurora-postgresql14"
+  family      = "aurora-postgresql${local.rds_engine_major_version}"
   description = "${var.app}-${var.environment}-cluster-parameter-group"
   tags = {
     project     = var.app

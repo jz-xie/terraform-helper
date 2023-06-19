@@ -4,3 +4,8 @@ output "cluster_arn" {
 # output "private_subnet_id" {
 # value = aws_subnet.subnets["private"].id
 # }
+
+output "cluster_id" {
+  value = module.aurora_postgresql_v2.cluster_id
+}
+
