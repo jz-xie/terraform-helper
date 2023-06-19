@@ -71,11 +71,3 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
-
-variable "additional_assume_role_policy_statements" {
-  description = "Additional assume role policy statements"
-  #   type        = map(any)
-  # default = {
-  #   "" = ""
-  # }
-}

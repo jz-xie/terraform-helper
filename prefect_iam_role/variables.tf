@@ -9,29 +9,36 @@ variable "project" {
   type        = string
 }
 
-variable "environment" {
-  description = "Workspace environment: staging or production"
-  type        = string
+
+variable "dask_required" {
+  description = "Whether the job needs to use Dask"
+  type        = bool
+  default     = false
 }
 
-variable "cluster_name" {
-  description = "EKS Cluster name"
-  type        = string
-}
-
-variable "job_iam_policies" {
+variable "job_execution_iam_policies" {
   description = "ARNs of the policies required by the job"
   type        = list(string)
 }
 
 variable "additional_assume_role_policy_statements" {
   description = "Additional assume role policy statements"
-  # type = object({
-  # Version = string, Statement = list(map) })
-  # default     = ""
+  type        = string
+  nullable    = true
+  default     = null
 }
 
-variable "prefect_storage_access_policy_name" {
-  description = "Policy to access prefect S3 storage"
-  type = string
+variable "execution_eks_clusters" {
+  description = "The name of clusters where job will be executed. (bigdata-eks-staging/bigdata-eks-production)"
+  type        = list(string)
+
+  validation {
+    condition     = alltrue([for i in var.execution_eks_clusters : contains(["bigdata-eks-staging", "bigdata-eks-production"], i)])
+    error_message = "Values must be from [bigdata-eks-staging bigdata-eks-production]"
+  }
+}
+
+variable "dev_role_arn" {
+  description = "ARN of the role that will be used by developers to assume the job execution role"
+  type        = string
 }
