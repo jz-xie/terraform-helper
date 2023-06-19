@@ -34,14 +34,21 @@ variable "additional_tags" {
   nullable    = true
 }
 
-variable "block_all_public_acccess" {
-  description = "If block all public access"
-  type        = bool
-  default     = true
-}
 
 variable "bucket_policy" {
   description = "Bucket policy"
   default     = null
   nullable    = true
+}
+variable "block_public_acls" {
+  default = true
+}
+variable "block_public_policy" {
+  default = true
+}
+variable "ignore_public_acls" {
+  default = true
+}
+variable "restrict_public_buckets" {
+  default = true
 }
